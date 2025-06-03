@@ -4,7 +4,8 @@ from flask import request, session, make_response
 from flask_restful import Resource
 from sqlalchemy.exc import IntegrityError
 from config import app, db, api, bcrypt
-from models import User, Olive, Producer, OliveOil
+from models import db, User, Olive, Producer, OliveOil
+from schemas import UserSchema, OliveSchema, ProducerSchema, OliveOilSchema
 
 class Users(Resource):
 
@@ -13,7 +14,7 @@ class Users(Resource):
         users = User.query.all()
 
         result = make_response(
-            [user.to_dict() for user in users],
+            UserSchema(many=True).dump(users),
             200
         )
 
@@ -26,7 +27,7 @@ class Olives(Resource):
         olives = Olive.query.all()
 
         result = make_response(
-            [olive.to_dict() for olive in olives],
+            OliveSchema(many=True).dump(olives),
             200
         )
 
@@ -39,7 +40,7 @@ class Producers(Resource):
         producers = Producer.query.all()
 
         result = make_response(
-            [producer.to_dict() for producer in producers],
+            ProducerSchema(many=True).dump(producers),
             200
         )
 
@@ -52,7 +53,7 @@ class Oils(Resource):
         oils = OliveOil.query.all()
 
         result = make_response(
-            [oil.to_dict() for oil in oils],
+            OliveOilSchema(many=True).dump(oils),
             200
         )
 

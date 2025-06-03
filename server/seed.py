@@ -1,10 +1,3 @@
-#!/usr/bin/env python3
-
-# Standard library imports
-from random import randint, choice as rc
-
-# Remote library imports
-from faker import Faker
 from config import app, db, bcrypt
 from models import User, Olive, Producer, OliveOil
 
