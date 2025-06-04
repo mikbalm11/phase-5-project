@@ -54,6 +54,6 @@ class OliveOilSchema(SQLAlchemySchema):
     # producer_id = auto_field()
     # olive_id = auto_field()
 
-    user = fields.Nested(UserSchema, only=("id", "username"))
-    olive = fields.Nested(OliveSchema, exclude=("oils",))
-    producer = fields.Nested(ProducerSchema, exclude=("oils",))
+    user = fields.Nested('UserSchema', only=("id", "username"))
+    olive = fields.Nested('OliveSchema', exclude=("oils",))
+    producer = fields.Nested('ProducerSchema', exclude=("oils",))

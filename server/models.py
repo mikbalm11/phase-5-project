@@ -11,6 +11,27 @@ class User(db.Model):
 
     oils = db.relationship('OliveOil', back_populates='user', cascade='all, delete-orphan')
 
+    @hybrid_property
+    def password(self):
+        raise AttributeError('Password hashes may not be viewed.')
+
+    @password.setter
+    def password(self, password):
+        password_hash = bcrypt.generate_password_hash(password.encode('utf-8'))
+        self._password = password_hash.decode('utf-8')
+
+    def authenticate(self, password):
+        try:
+            return bcrypt.check_password_hash(self._password, password.encode('utf-8'))
+        except ValueError as e:
+            raise ValueError(f"Password hash is invalid: {self._password}") from e
+
+    @validates('username')
+    def validate_username(self, key, username):
+        if not username or not isinstance(username, str) or len(username.strip()) < 3:
+            raise ValueError("Username must be a non-empty string of at least 3 characters.")
+        return username
+
     def __repr__(self):
         return f'<User id={self.id} username={self.username}>'
 
