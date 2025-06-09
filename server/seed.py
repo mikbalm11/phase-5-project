@@ -43,7 +43,7 @@ with app.app_context():
 
     colors = ['Green', 'Black', 'Purple']
     rarities = ['Common', 'Uncommon', 'Rare', 'Very Rare']
-    countries = ['Greece', 'Spain', 'Italy', 'Turkey', 'Morocco']
+    countries = ['Greece', 'Spain', 'Italy', 'Turkiye', 'Morocco']
     regions = ['Crete', 'Catalonia', 'Andalusia', 'Sicily', 'Aegean']
 
     print("Generating unique olive names...")

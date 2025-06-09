@@ -1,13 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, createContext, useContext } from "react";
 import LoginForm from "./LoginForm";
 import SignUpForm from "./SignUpForm";
 import NavBar from "./NavBar";
+import UserOliveOils from "./UserOliveOils";
 import UserOlives from "./UserOlives";
+import UserProducers from "./UserProducers";
+
+export const UserContext = createContext();
 
 function App() {
-    const [user, setUser] = useState(null);
-    const [form, setForm] = useState(null);
-    const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
+  const [form, setForm] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [tabOpen, setTabOpen] = useState("oils");
 
   useEffect(() => {
     async function fetchInitialData() {
@@ -17,9 +22,7 @@ function App() {
         });
         if (!res.ok) throw new Error("Not logged in");
         const data = await res.json();
-
         setUser(data);
-
       } catch {
         setUser(null);
       } finally {
@@ -38,7 +41,6 @@ function App() {
 
       const userData = await sessionRes.json();
       setUser(userData);
-
       setForm(null);
     } catch (err) {
       console.error("Login failed:", err);
@@ -54,28 +56,37 @@ function App() {
     });
   }
 
-  if (loading) return <p>Loading...</p>;
-
-  if (user) {
-    return (
-      <div className="app-logged-in">
-        <NavBar user={user} onLogout={handleLogout} onNavigate={setForm} />
-        <UserOlives user={user} />
-      </div>
-    );
-  }
-
   return (
-    <div className="app-container">
-      <NavBar user={user} onLogout={handleLogout} onNavigate={setForm} />
-      {form === "login" && <LoginForm onLogin={handleLogin} />}
-      {form === "signup" && <SignUpForm onLogin={handleLogin} />}
-      {(form === "login" || form === "signup") && (
-        <button onClick={() => setForm(null)} className="btn btn-secondary">
-          Back
-        </button>
+    <UserContext.Provider value={{ user, setUser }}>
+      {loading ? (
+        <p>Loading...</p>
+      ) : user ? (
+        <div>
+          <NavBar onLogout={handleLogout} onNavigate={setForm} />
+
+            <div>
+                <button onClick={() => setTabOpen("oils")}>Oils</button>
+                <button onClick={() => setTabOpen("olives")}>Olives</button>
+                <button onClick={() => setTabOpen("producers")}>Producers</button>
+            </div>
+
+            {tabOpen === "oils" && <UserOliveOils />}
+            {tabOpen === "olives" && <UserOlives />}
+            {tabOpen === "producers" && <UserProducers />}
+        </div>
+      ) : (
+        
+        <div>
+          <NavBar onLogout={handleLogout} onNavigate={setForm} />
+          {form === "login" && <LoginForm onLogin={handleLogin} />}
+          {form === "signup" && <SignUpForm onLogin={handleLogin} />}
+          {(form === "login" || form === "signup") && (
+            <button onClick={() => setForm(null)}>Back</button>
+          )}
+          <div>Welcome to OliveCore 🫒</div>
+        </div>
       )}
-    </div>
+    </UserContext.Provider>
   );
 }
 

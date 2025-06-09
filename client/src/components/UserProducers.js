@@ -1,16 +1,16 @@
 import React, { useContext } from 'react'
 import { UserContext } from './App'
 
-function UserOlives() {
+function UserProducers() {
     const { user } = useContext(UserContext);
 
     return (
         <div>
-            <h1>My Olives</h1>
+            <h1>My Producers</h1>
             <ul>
                 {user.oils.map((oil) => (
-                <li key={oil.olive.id}>
-                    <strong>{oil.olive.name}</strong> — {oil.olive.region}, {oil.olive.country}, Color: {oil.olive.color}, Rarity: {oil.olive.rarity}
+                <li key={oil.producer.id}>
+                    <strong>{oil.producer.name}</strong> — Address: {oil.producer.address}, Capacity: {oil.producer.capacity}
                 </li>
                 ))}
             </ul>
@@ -18,4 +18,4 @@ function UserOlives() {
     )
 }
 
-export default UserOlives
+export default UserProducers
