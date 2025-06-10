@@ -122,6 +122,38 @@ class Oils(Resource):
 
         return result
 
+    def post(self):
+# { name, year, price, acidity, isActive, producerId, oliveId }
+        fields = request.get_json()
+        name = fields.get('name')
+        year = fields.get('year')
+        price = fields.get('price')
+        acidity = fields.get('acidity')
+        isActive = fields.get('isActive')
+        producer_id = fields.get('producerId')
+        olive_id = fields.get('oliveId')
+
+        new_oil = OliveOil(
+            name=name, 
+            year=year, 
+            price=price, 
+            acidity=acidity, 
+            isActive=isActive, 
+            user_id=session['user_id'],
+            producer_id=producer_id, 
+            olive_id=olive_id
+        )
+
+        db.session.add(new_oil)
+        db.session.commit()
+
+        result = make_response(
+            oils_schema.dump(new_oil),
+            201
+        )
+
+        return result
+
 class Signup(Resource):
 
     def post(self):

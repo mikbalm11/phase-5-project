@@ -45,7 +45,7 @@ function AddOliveForm({ onAddOlive }) {
       />
       <input
         type="text"
-        placholder="New olive country"
+        placeholder="New olive country"
         value={country}
         onChange={(e) => setCountry(e.target.value)}
         required

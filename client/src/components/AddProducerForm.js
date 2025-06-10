@@ -40,7 +40,7 @@ function AddProducerForm({ onAddProducer }) {
       />
       <input
         type="text"
-        placholder="New producer address"
+        placeholder="New producer address"
         value={address}
         onChange={(e) => setAddress(e.target.value)}
         required

@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 import { UserContext } from './App'
 import AddOilForm from './AddOilForm'
 
-function UserOliveOils() {
+function UserOliveOils({ producers, olives, setProducers, setOlives, userProducers, userOlives, setUserProducers , setUserOlives}) {
     const { user } = useContext(UserContext);
 
     return (
@@ -16,7 +16,8 @@ function UserOliveOils() {
                 ))}
             </ul>
             <AddOilForm
-                producers={user.oils.map((oil) => oil.producer)}
+                producers={producers}
+                olives={olives}
                 onAddProducer={() => {}}
                 onAddOlive={() => {}}
             />

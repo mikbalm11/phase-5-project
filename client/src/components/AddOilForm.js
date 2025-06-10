@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import AddProducerForm from "./AddProducerForm";
 import AddOliveForm from "./AddOliveForm";
 
-function AddOilForm({ producers, onAddProducer, onAddOlive }) { //, userProducers, onAddOil, ,  }) {
+function AddOilForm({ producers, olives, onAddProducer, onAddOlive }) { //, userProducers, onAddOil, ,  }) {
   const [name, setName] = useState("");
   const [year, setYear] = useState("");
   const [price, setPrice] = useState("");
@@ -14,31 +14,50 @@ function AddOilForm({ producers, onAddProducer, onAddOlive }) { //, userProducer
   const [showProducerForm, setShowProducerForm] = useState(false);
   const [showOliveForm, setShowOliveForm] = useState(false);
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     if (!producerId) {
       alert("Please select a producer or add a new one");
       return;
     }
+    if (!oliveId) {
+      alert("Please select an olive or add a new one");
+      return;
+    }
+    
+    try {
+      const res = await fetch("/oils", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, year, price, acidity, isActive, producerId, oliveId }),
+      });
 
-    // onAddOil({
-    //   name,
-    //   year,
-    //   price,
-    //   acidity,
-    //   isActive,
-    //   producerId,
-    //   oliveId,
-    // });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Failed to add olive oil");
+      }
+      // onAddOil({
+      //   name,
+      //   year,
+      //   price,
+      //   acidity,
+      //   isActive,
+      //   producerId,
+      //   oliveId,
+      // });
 
-    setName("");
-    setYear("");
-    setPrice("");
-    setAcidity("");
-    setIsActive(true);
-    setProducerId("");
-    setOliveId("");
-    setShowProducerForm(false);
+      setName("");
+      setYear("");
+      setPrice("");
+      setAcidity("");
+      setIsActive(true);
+      setProducerId("");
+      setOliveId("");
+      setShowProducerForm(false);
+      setShowOliveForm(false);
+    } catch (error) {
+      alert(error.message);
+    }
   }
 
   function handleNewProducer(newProducer) {
@@ -82,7 +101,7 @@ function AddOilForm({ producers, onAddProducer, onAddOlive }) { //, userProducer
           required
         />
         <input
-          type="text"
+          type="number"
           placeholder="Acidity"
           value={acidity}
           onChange={(e) => setAcidity(e.target.value)}
@@ -103,6 +122,18 @@ function AddOilForm({ producers, onAddProducer, onAddOlive }) { //, userProducer
           {producers.map((producer) => (
             <option key={producer.id} value={producer.id}>
               {producer.name}
+            </option>
+          ))}
+        </select>
+        <select
+          value={oliveId}
+          onChange={(e) => setOliveId(e.target.value)}
+          required
+        >
+          <option value="">-- Select Olive --</option>
+          {olives.map((olive) => (
+            <option key={olive.id} value={olive.id}>
+              {olive.name}
             </option>
           ))}
         </select>
