@@ -1,5 +1,6 @@
 import React, { useContext } from 'react'
 import { UserContext } from './App'
+import AddOilForm from './AddOilForm'
 
 function UserOliveOils() {
     const { user } = useContext(UserContext);
@@ -14,6 +15,11 @@ function UserOliveOils() {
                 </li>
                 ))}
             </ul>
+            <AddOilForm
+                producers={user.oils.map((oil) => oil.producer)}
+                onAddProducer={() => {}}
+                onAddOlive={() => {}}
+            />
         </div>
     )
 }

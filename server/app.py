@@ -19,11 +19,6 @@ def check_if_logged_in():
         'signup',
         'login',
         'check_session'
-        'logout'
-        'users',
-        'olives',
-        'producers',
-        'oils'
     ]
 
     if (request.endpoint) not in open_access_list and (not session.get('user_id')):
@@ -61,6 +56,27 @@ class Olives(Resource):
 
         return result
 
+    def post(self):
+
+        fields = request.get_json()
+        name = fields.get('name')
+        country = fields.get('country')
+        region = fields.get('region')
+        color = fields.get('color')
+        rarity = fields.get('rarity')
+
+        new_olive = Olive(name=name, country=country, region=region, color=color, rarity=rarity)
+
+        db.session.add(new_olive)
+        db.session.commit()
+
+        result = make_response(
+            olive_schema.dump(new_olive),
+            201
+        )
+
+        return result
+
 class Producers(Resource):
 
     def get(self):
@@ -70,6 +86,25 @@ class Producers(Resource):
         result = make_response(
             ProducerSchema(many=True).dump(producers),
             200
+        )
+
+        return result
+
+    def post(self):
+
+        fields = request.get_json()
+        name = fields.get('name')
+        address = fields.get('address')
+        capacity = fields.get('capacity')
+
+        new_producer = Producer(name=name, address=address, capacity=capacity)
+
+        db.session.add(new_producer)
+        db.session.commit()
+
+        result = make_response(
+            producer_schema.dump(new_producer),
+            201
         )
 
         return result
@@ -153,6 +188,22 @@ class CheckSession(Resource):
 
             if not user:
                 return make_response({}, 401)
+            
+            producer_map ={}
+
+            for oil in user.oils:
+                producer = oil.producer
+
+                if producer and producer.id not in producer_map:
+                    producer_map[producer.id] = {
+                        "id": producer.id,
+                        "name": producer.name,
+                        "address": producer.address,
+                        "capacity": producer.capacity,
+                        "olives": []
+                    }
+                
+                producer_map[producer.id]["olives"].append(oils_schema.dump(oil))
 
             user_schema = UserSchema()
             user_data = user_schema.dump(user)

@@ -13,6 +13,8 @@ function App() {
   const [form, setForm] = useState(null);
   const [loading, setLoading] = useState(true);
   const [tabOpen, setTabOpen] = useState("oils");
+  const [producers, setProducers] = useState([]);
+  const [userProducers, setUserProducers] = useState([]);
 
   useEffect(() => {
     async function fetchInitialData() {
@@ -23,8 +25,15 @@ function App() {
         if (!res.ok) throw new Error("Not logged in");
         const data = await res.json();
         setUser(data);
+        setUserProducers(data.producers);
+
+        const producerRes = await fetch("/producers");
+        setProducers(await producerRes.json());
+
       } catch {
         setUser(null);
+        setProducers([]);
+        setUserProducers([]);
       } finally {
         setLoading(false);
       }
@@ -70,7 +79,7 @@ function App() {
                 <button onClick={() => setTabOpen("producers")}>Producers</button>
             </div>
 
-            {tabOpen === "oils" && <UserOliveOils />}
+            {tabOpen === "oils" && <UserOliveOils producers={producers} setProducers={setProducers} setUserProducers={setUserProducers} />}
             {tabOpen === "olives" && <UserOlives />}
             {tabOpen === "producers" && <UserProducers />}
         </div>
