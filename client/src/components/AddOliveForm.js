@@ -7,9 +7,9 @@ function AddOliveForm({ onAddOlive }) {
   const [color, setColor] = useState("");
   const [rarity, setRarity] = useState("");
 
-
   async function handleSubmit(e) {
     e.preventDefault();
+
     try {
       const res = await fetch("/olives", {
         method: "POST",
@@ -24,6 +24,7 @@ function AddOliveForm({ onAddOlive }) {
 
       const newOlive = await res.json();
       onAddOlive(newOlive);
+
       setName("");
       setCountry("");
       setRegion("");
@@ -38,42 +39,40 @@ function AddOliveForm({ onAddOlive }) {
     <form onSubmit={handleSubmit}>
       <input
         type="text"
-        placeholder="New olive name"
+        placeholder="Olive name"
         value={name}
         onChange={(e) => setName(e.target.value)}
         required
       />
       <input
         type="text"
-        placeholder="New olive country"
+        placeholder="Country"
         value={country}
         onChange={(e) => setCountry(e.target.value)}
         required
       />
       <input
         type="text"
-        placeholder="New producer region"
+        placeholder="Region"
         value={region}
         onChange={(e) => setRegion(e.target.value)}
         required
       />
       <input
         type="text"
-        placeholder="New olive color"
+        placeholder="Color"
         value={color}
         onChange={(e) => setColor(e.target.value)}
         required
       />
       <input
         type="text"
-        placeholder="New olive rarity"
+        placeholder="Rarity"
         value={rarity}
         onChange={(e) => setRarity(e.target.value)}
         required
       />
-      <button type="submit">
-        Add Olive
-      </button>
+      <button type="submit">Add Olive</button>
     </form>
   );
 }

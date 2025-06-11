@@ -27,8 +27,8 @@ function App() {
         if (!res.ok) throw new Error("Not logged in");
         const data = await res.json();
         setUser(data);
-        setUserProducers(data.producers);
-        setUserOlives(data.olives);
+        setUserProducers(data.producers || []);
+        setUserOlives(data.olives || []);
 
         const producerRes = await fetch("/producers");
         setProducers(await producerRes.json());
@@ -72,7 +72,13 @@ function App() {
   }
 
   return (
-    <UserContext.Provider value={{ user, setUser }}>
+    <UserContext.Provider value={{ 
+      user, setUser,
+      producers, setProducers,
+      olives, setOlives,
+      userProducers, setUserProducers,
+      userOlives, setUserOlives
+      }}>
       {loading ? (
         <p>Loading...</p>
       ) : user ? (
@@ -85,16 +91,7 @@ function App() {
                 <button onClick={() => setTabOpen("producers")}>Producers</button>
             </div>
 
-            {tabOpen === "oils" && <UserOliveOils 
-            producers={producers} 
-            olives={olives}
-            setProducers={setProducers} 
-            setOlives={setOlives}
-            userProducers={userProducers} 
-            userOlives={userOlives}
-            setUserProducers={setUserProducers}
-            setUserOlives={setUserOlives}
-             />}
+            {tabOpen === "oils" && <UserOliveOils />}
             {tabOpen === "olives" && <UserOlives />}
             {tabOpen === "producers" && <UserProducers />}
         </div>

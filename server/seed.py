@@ -50,7 +50,7 @@ with app.app_context():
     olive_names = set()
     generated_olives = []
 
-    while len(generated_olives) < 25:
+    while len(generated_olives) < 50:
         name = f"{fake.unique.word().capitalize()} Olive"
         if name not in olive_names:
             olive_names.add(name)
@@ -79,7 +79,7 @@ with app.app_context():
             name=f"{fake.company()} Press",
             address=fake.address().replace("\n", ", "),
             capacity=random.randint(1000, 10000)
-        ) for _ in range(10)
+        ) for _ in range(50)
     ]
 
     producers = base_producers + generated_producers
@@ -107,7 +107,7 @@ with app.app_context():
             user_id=random.choice(users).id,
             producer_id=random.choice(producers).id,
             olive_id=random.choice(olives).id
-        ) for _ in range(25)
+        ) for _ in range(100)
     ]
 
     db.session.add_all(base_oils + generated_oils)

@@ -7,6 +7,7 @@ function AddProducerForm({ onAddProducer }) {
 
   async function handleSubmit(e) {
     e.preventDefault();
+
     try {
       const res = await fetch("/producers", {
         method: "POST",
@@ -21,6 +22,7 @@ function AddProducerForm({ onAddProducer }) {
 
       const newProducer = await res.json();
       onAddProducer(newProducer);
+
       setName("");
       setAddress("");
       setCapacity("");
@@ -33,28 +35,26 @@ function AddProducerForm({ onAddProducer }) {
     <form onSubmit={handleSubmit}>
       <input
         type="text"
-        placeholder="New producer name"
+        placeholder="Producer name"
         value={name}
         onChange={(e) => setName(e.target.value)}
         required
       />
       <input
         type="text"
-        placeholder="New producer address"
+        placeholder="Producer address"
         value={address}
         onChange={(e) => setAddress(e.target.value)}
         required
       />
       <input
         type="number"
-        placeholder="New producer capacity"
+        placeholder="Capacity"
         value={capacity}
         onChange={(e) => setCapacity(e.target.value)}
         required
       />
-      <button type="submit">
-        Add Producer
-      </button>
+      <button type="submit">Add Producer</button>
     </form>
   );
 }

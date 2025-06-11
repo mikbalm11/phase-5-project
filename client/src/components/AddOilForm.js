@@ -1,8 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import { UserContext } from "./App";
 import AddProducerForm from "./AddProducerForm";
 import AddOliveForm from "./AddOliveForm";
 
-function AddOilForm({ producers, olives, onAddProducer, onAddOlive }) { //, userProducers, onAddOil, ,  }) {
+function AddOilForm() {
+  const {
+    producers, setProducers,
+    olives, setOlives,
+    user, setUser,
+    userProducers, setUserProducers,
+    userOlives, setUserOlives
+  } = useContext(UserContext);  
+
   const [name, setName] = useState("");
   const [year, setYear] = useState("");
   const [price, setPrice] = useState("");
@@ -29,22 +38,25 @@ function AddOilForm({ producers, olives, onAddProducer, onAddOlive }) { //, user
       const res = await fetch("/oils", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, year, price, acidity, isActive, producerId, oliveId }),
+        body: JSON.stringify({
+          name, 
+          year, 
+          price, 
+          acidity, 
+          isActive, 
+          producerId: producerId, 
+          oliveId: oliveId 
+        }),
       });
 
       if (!res.ok) {
         const err = await res.json();
         throw new Error(err.error || "Failed to add olive oil");
       }
-      // onAddOil({
-      //   name,
-      //   year,
-      //   price,
-      //   acidity,
-      //   isActive,
-      //   producerId,
-      //   oliveId,
-      // });
+    
+      const newOil = await res.json();
+
+      setUser({ ...user, oils: [...user.oils, newOil] });
 
       setName("");
       setYear("");
@@ -61,13 +73,15 @@ function AddOilForm({ producers, olives, onAddProducer, onAddOlive }) { //, user
   }
 
   function handleNewProducer(newProducer) {
-    onAddProducer(newProducer);
+    setProducers([...producers, newProducer]);
+    setUserProducers([...userProducers, newProducer]);
     setProducerId(newProducer.id);
     setShowProducerForm(false);
   }
 
   function handleNewOlive(newOlive) {
-    onAddOlive(newOlive);
+    setOlives([...olives, newOlive]);
+    setUserOlives([...userOlives, newOlive]);
     setOliveId(newOlive.id);
     setShowOliveForm(false);
   }
@@ -142,23 +156,13 @@ function AddOilForm({ producers, olives, onAddProducer, onAddOlive }) { //, user
         </button>
       </form>
     <div>Don't see your producer or olive?</div>
-      <button
-        onClick={() => setShowProducerForm((prev) => !prev)}
-      >
-        
+      <button onClick={() => setShowProducerForm((prev) => !prev)}>
         {showProducerForm ? "Cancel Adding Producer" : "Add New Producer"}
-        
       </button>
-
-
       {showProducerForm && <AddProducerForm onAddProducer={handleNewProducer} />}
-          <div> </div>
-      <button
-        onClick={() => setShowOliveForm((prev) => !prev)}
-      >
-        
+
+      <button onClick={() => setShowOliveForm((prev) => !prev)}>
         {showOliveForm ? "Cancel Adding Olive" : "Add New Olive"}
-        
       </button>
       {showOliveForm && <AddOliveForm onAddOlive={handleNewOlive} />}
 

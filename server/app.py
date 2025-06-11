@@ -123,7 +123,7 @@ class Oils(Resource):
         return result
 
     def post(self):
-# { name, year, price, acidity, isActive, producerId, oliveId }
+
         fields = request.get_json()
         name = fields.get('name')
         year = fields.get('year')
@@ -153,6 +153,176 @@ class Oils(Resource):
         )
 
         return result
+
+
+class Oil(Resource):
+
+    def patch(self, id):
+
+        if not session.get('user_id'):
+
+            result = make_response(
+                {'error': '401 Unauthorized'},
+                401
+            )
+
+            return result
+
+        oil = OliveOil.query.get(id)
+
+        if not oil:
+
+            result = make_response(
+                {'error': '404 Not Found'},
+                404
+            )
+
+            return result
+
+        if oil.user_id != session['user_id']:
+
+            result = make_response(
+                {'error': '403 Forbidden'},
+                403
+            )
+
+            return result
+
+        fields = request.get_json()
+        name = fields.get('name')
+        year = fields.get('year')
+        price = fields.get('price')
+        acidity = fields.get('acidity')
+        isActive = fields.get('isActive')
+        producer_id = fields.get('producerId')
+        olive_id = fields.get('oliveId')
+
+
+        if producer_id:
+            producer = Producer.query.get(producer_id)
+
+            if not producer:
+
+                result = make_response(
+                    {'error': '404 Not Found'},
+                    404
+                )
+
+                return result
+        
+        if olive_id:
+            olive = Olive.query.get(olive_id)
+
+            if not olive:
+
+                result = make_response(
+                    {'error': '404 Not Found'},
+                    404
+                )
+
+                return result
+
+        try:
+            if name is not None:
+                oil.name = name
+
+            if year is not None:
+                oil.year = year
+
+            if price is not None:
+                oil.price = price
+
+            if acidity is not None:
+                oil.acidity = acidity
+
+            if isActive is not None:
+                oil.isActive = isActive
+
+            if producer_id is not None:
+                oil.producer_id = producer_id
+
+            if olive_id is not None:
+                oil.olive_id = olive_id
+
+            db.session.commit()
+
+            result = make_response(
+                oils_schema.dump(oil),
+                200
+            )
+
+            return result
+
+        except IntegrityError:
+            db.session.rollback()
+
+            result = make_response(
+                {'error': '422 Unprocessable Entity'},
+                422
+            )
+
+            return result
+
+        except ValueError as e:
+
+            result = make_response(
+                {'error': str(e)},
+                422
+            )
+
+            return result
+
+    def delete(self, id):
+
+        if not session.get('user_id'):
+
+            result = make_response(
+                {'error': '401 Unauthorized'},
+                401
+            )
+
+            return result
+
+        oil = OliveOil.query.get(id)
+
+        if not oil:
+
+            result = make_response(
+                {'error': '404 Not Found'},
+                404
+            )
+
+            return result
+
+        if oil.user_id != session['user_id']:
+
+            result = make_response(
+                {'error': '403 Forbidden'},
+                403
+            )
+
+            return result
+
+        try:
+            db.session.delete(oil)
+            db.session.commit()
+
+            result = make_response(
+                {'message': '204: No Content'},
+                204
+            )
+
+            return result
+
+        except Exception as e:
+            db.session.rollback()
+
+            result = make_response(
+                {'error': str(e)},
+                422
+            )
+
+            return result
 
 class Signup(Resource):
 
@@ -316,6 +486,7 @@ api.add_resource(Users, '/users', endpoint='users')
 api.add_resource(Olives, '/olives', endpoint='olives')
 api.add_resource(Producers, '/producers', endpoint='producers')
 api.add_resource(Oils, '/oils', endpoint='oils')
+api.add_resource(Oil, '/oils/<int:id>', endpoint='oil')
 api.add_resource(Signup, '/signup', endpoint='signup')
 api.add_resource(CheckSession, '/check_session', endpoint='check_session')
 api.add_resource(Login, '/login', endpoint='login')
@@ -323,4 +494,3 @@ api.add_resource(Logout, '/logout', endpoint='logout')
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
-
