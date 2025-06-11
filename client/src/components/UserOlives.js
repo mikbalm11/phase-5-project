@@ -2,20 +2,20 @@ import React, { useContext } from 'react'
 import { UserContext } from './App'
 
 function UserOlives() {
-    const { user } = useContext(UserContext);
+  const { userOlives } = useContext(UserContext);
 
-    return (
-        <div>
-            <h1>My Olives</h1>
-            <ul>
-                {user.oils.map((oil) => (
-                <li key={oil.olive.id}>
-                    <strong>{oil.olive.name}</strong> — {oil.olive.region}, {oil.olive.country}, Color: {oil.olive.color}, Rarity: {oil.olive.rarity}
-                </li>
-                ))}
-            </ul>
-        </div>
-    )
+  return (
+    <div>
+      <h1>My Olives</h1>
+      <ul>
+        {userOlives.map((olive) => (
+          <li key={olive.id}>
+            <strong>{olive.name}</strong> — {olive.region}, {olive.country}, Color: {olive.color}, Rarity: {olive.rarity}
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
 }
 
 export default UserOlives

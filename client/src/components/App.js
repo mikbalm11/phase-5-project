@@ -9,7 +9,7 @@ import UserProducers from "./UserProducers";
 export const UserContext = createContext();
 
 function App() {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState({ oils: [] });
   const [form, setForm] = useState(null);
   const [loading, setLoading] = useState(true);
   const [tabOpen, setTabOpen] = useState("oils");
@@ -17,6 +17,15 @@ function App() {
   const [userProducers, setUserProducers] = useState([]);
   const [olives, setOlives] = useState([]);
   const [userOlives, setUserOlives] = useState([]);
+  const [extraData, setExtraData] = useState({});
+
+  function applyUserData(data) {
+    const userObj = data.user || { oils: [] };
+    setUser(userObj);
+    setUserProducers((userObj.oils || []).map((oil) => oil.producer));
+    setUserOlives((userObj.oils || []).map((oil) => oil.olive));
+    setExtraData(data.extraData || {});
+  }
 
   useEffect(() => {
     async function fetchInitialData() {
@@ -26,9 +35,7 @@ function App() {
         });
         if (!res.ok) throw new Error("Not logged in");
         const data = await res.json();
-        setUser(data);
-        setUserProducers(data.producers || []);
-        setUserOlives(data.olives || []);
+        applyUserData(data);
 
         const producerRes = await fetch("/producers");
         setProducers(await producerRes.json());
@@ -36,6 +43,7 @@ function App() {
         const oliveRes = await fetch("/olives");
         setOlives(await oliveRes.json());
 
+        setForm(null);
       } catch {
         setUser(null);
         setProducers([]);
@@ -54,8 +62,9 @@ function App() {
       });
       if (!sessionRes.ok) throw new Error("Login session check failed");
 
-      const userData = await sessionRes.json();
-      setUser(userData);
+      const data = await sessionRes.json();
+      applyUserData(data);
+
       setForm(null);
     } catch (err) {
       console.error("Login failed:", err);
@@ -77,7 +86,8 @@ function App() {
       producers, setProducers,
       olives, setOlives,
       userProducers, setUserProducers,
-      userOlives, setUserOlives
+      userOlives, setUserOlives,
+      extraData
       }}>
       {loading ? (
         <p>Loading...</p>

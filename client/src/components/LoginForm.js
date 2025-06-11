@@ -13,10 +13,8 @@ function LoginForm({ onLogin }) {
 
     fetch("/login", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        credentials: "include",
-      },
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
       body: JSON.stringify({ username, password }),
     }).then((r) => {
       setIsLoading(false);

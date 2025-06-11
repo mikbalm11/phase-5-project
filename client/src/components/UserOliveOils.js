@@ -2,8 +2,6 @@ import React, { useState, useContext } from 'react'
 import { UserContext } from './App'
 import AddOilForm from './AddOilForm'
 
-
-
 function UserOliveOils() {
   const { user, setUser } = useContext(UserContext);
   const [editingId, setEditingId] = useState(null);
@@ -24,11 +22,17 @@ function UserOliveOils() {
   }
 
   async function handleEdit(oilId) {
+    const payload = {
+    name: editFields.name,
+    year: parseInt(editFields.year),
+    price: parseFloat(editFields.price),
+    };
+
     const res = await fetch(`/oils/${oilId}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify(editFields),
+      body: JSON.stringify(payload),
     });
 
     if (res.ok) {
@@ -44,7 +48,6 @@ function UserOliveOils() {
       alert("Failed to edit olive oil");
     }
   }
-
 
   function handleDelete(id) {
     fetch(`/oils/${id}`, {
@@ -66,7 +69,7 @@ function UserOliveOils() {
     <div>
       <h1>My Olive Oils</h1>
       <ul>
-        {user.oils.map((oil) => (
+        {(user?.oils || []).map((oil) => (
           <li key={oil.id}>
             {editingId === oil.id ? (
               <div>
@@ -78,14 +81,22 @@ function UserOliveOils() {
                   }
                 />
                 <input
-                  type="text"
+                  type="number"
+                  min="1900"
+                  max="2025"
+                  step="1"
+                  placeholder="Year (1900-2025)"
                   value={editFields.year}
                   onChange={(e) =>
                     setEditFields({ ...editFields, year: e.target.value })
                   }
+                  style={{ width: "50px" }}
                 />
                 <input
-                  type="text"
+                  type="number"
+                  placeholder="Price"
+                  min="0.0"
+                  step="10.0"
                   value={editFields.price}
                   onChange={(e) =>
                     setEditFields({ ...editFields, price: e.target.value })
@@ -97,8 +108,8 @@ function UserOliveOils() {
             ) : (
               <div>
                 <strong>{oil.name}</strong> — Year: {oil.year}, Price: ${oil.price}
-                <button onClick={() => startEditing(oil)}>Edit</button>
-                <button onClick={() => handleDelete(oil.id)}>Delete</button>
+                <button onClick={() => startEditing(oil)}>✏️</button>
+                <button onClick={() => handleDelete(oil.id)}>🗑️</button>
               </div>
             )}
           </li>
@@ -108,6 +119,5 @@ function UserOliveOils() {
     </div>
   );
 }
-
 
 export default UserOliveOils

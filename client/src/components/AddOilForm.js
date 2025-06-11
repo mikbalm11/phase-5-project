@@ -10,7 +10,7 @@ function AddOilForm() {
     user, setUser,
     userProducers, setUserProducers,
     userOlives, setUserOlives
-  } = useContext(UserContext);  
+  } = useContext(UserContext);
 
   const [name, setName] = useState("");
   const [year, setYear] = useState("");
@@ -33,19 +33,20 @@ function AddOilForm() {
       alert("Please select an olive or add a new one");
       return;
     }
-    
+
     try {
       const res = await fetch("/oils", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({
-          name, 
-          year, 
-          price, 
-          acidity, 
-          isActive, 
-          producerId: producerId, 
-          oliveId: oliveId 
+          name,
+          year: parseInt(year),
+          price: parseFloat(price),
+          acidity: parseFloat(acidity),
+          isActive,
+          producerId: producerId,
+          oliveId: oliveId
         }),
       });
 
@@ -53,7 +54,7 @@ function AddOilForm() {
         const err = await res.json();
         throw new Error(err.error || "Failed to add olive oil");
       }
-    
+
       const newOil = await res.json();
 
       setUser({ ...user, oils: [...user.oils, newOil] });
@@ -98,28 +99,35 @@ function AddOilForm() {
           required
         />
         <input
-          type="year"
-          min="1990"
+          type="number"
+          min="1900"
           max="2025"
           step="1"
-          placeholder="Year (1990-2025)"
+          placeholder="Year (1900-2025)"
           value={year}
           onChange={(e) => setYear(e.target.value)}
           required
+          style={{ minWidth: "120px" }}
         />
         <input
-          type="text"
+          type="number"
           placeholder="Price"
+          min="0.0"
+          step="10.0"
           value={price}
           onChange={(e) => setPrice(e.target.value)}
           required
         />
         <input
           type="number"
-          placeholder="Acidity"
+          min="0.0"
+          max="3.0"
+          step="0.1"
+          placeholder="Acidity (0.0-3.0)"
           value={acidity}
           onChange={(e) => setAcidity(e.target.value)}
           required
+          style={{ minWidth: "108px" }}
         />
         Active
         <input
@@ -155,7 +163,7 @@ function AddOilForm() {
           Add Olive Oil
         </button>
       </form>
-    <div>Don't see your producer or olive?</div>
+      <div>Don't see your producer or olive?</div>
       <button onClick={() => setShowProducerForm((prev) => !prev)}>
         {showProducerForm ? "Cancel Adding Producer" : "Add New Producer"}
       </button>

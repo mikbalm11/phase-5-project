@@ -4,7 +4,7 @@ from flask import request, session, make_response
 from flask_restful import Resource
 from sqlalchemy.exc import IntegrityError
 from config import app, db, api, bcrypt
-from models import db, User, Olive, Producer, OliveOil
+from models import db, User, Olive, Producer, OliveOil, OLIVE_OIL_PRODUCING_REGIONS_BY_COUNTRY, OLIVE_OIL_PRODUCING_COUNTRIES, OLIVE_COLORS, OLIVE_RARITIES
 from schemas import UserSchema, OliveSchema, ProducerSchema, OliveOilSchema
 
 user_schema = UserSchema()
@@ -308,7 +308,7 @@ class Oil(Resource):
             db.session.commit()
 
             result = make_response(
-                {'message': '204: No Content'},
+                '',
                 204
             )
 
@@ -410,8 +410,20 @@ class CheckSession(Resource):
             user_schema = UserSchema()
             user_data = user_schema.dump(user)
 
+            extra_data = {
+                "oliveOilProducingRegionsByCountry": OLIVE_OIL_PRODUCING_REGIONS_BY_COUNTRY,
+                "oliveOilProducingCountries": OLIVE_OIL_PRODUCING_COUNTRIES,
+                "oliveColors": OLIVE_COLORS,
+                "oliveRarities": OLIVE_RARITIES
+            }
+
+            response_data = {
+                "user": user_data,
+                "extraData": extra_data
+            }
+
             result = make_response(
-                user_data,
+                response_data,
                 200
             )
 

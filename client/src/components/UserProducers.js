@@ -2,20 +2,20 @@ import React, { useContext } from 'react'
 import { UserContext } from './App'
 
 function UserProducers() {
-    const { user } = useContext(UserContext);
+  const { userProducers } = useContext(UserContext);
 
-    return (
-        <div>
-            <h1>My Producers</h1>
-            <ul>
-                {user.oils.map((oil) => (
-                <li key={oil.producer.id}>
-                    <strong>{oil.producer.name}</strong> — Address: {oil.producer.address}, Capacity: {oil.producer.capacity}
-                </li>
-                ))}
-            </ul>
-        </div>
-    )
+  return (
+    <div>
+      <h1>My Producers</h1>
+      <ul>
+        {userProducers.map((producer) => (
+          <li key={producer.id}>
+            <strong>{producer.name}</strong> — Address: {producer.address}, Capacity: {producer.capacity}
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
 }
 
 export default UserProducers

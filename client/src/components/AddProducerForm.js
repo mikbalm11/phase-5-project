@@ -12,7 +12,8 @@ function AddProducerForm({ onAddProducer }) {
       const res = await fetch("/producers", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, address, capacity }),
+        credentials: "include",
+        body: JSON.stringify({ name, address, capacity: parseInt(capacity) }),
       });
 
       if (!res.ok) {
@@ -49,7 +50,8 @@ function AddProducerForm({ onAddProducer }) {
       />
       <input
         type="number"
-        placeholder="Capacity"
+        placeholder="Capacity (min: 0)"
+        min="0"
         value={capacity}
         onChange={(e) => setCapacity(e.target.value)}
         required
