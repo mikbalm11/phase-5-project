@@ -11,7 +11,6 @@ This repository contains a full-stack web application built using **Flask** for 
 - [Tech Stack](#tech-stack)  
 - [Setup and Installation](#setup-and-installation) 
 - [Running the Application](#running-the-application)  
-- [Testing](#testing)  
 - [Project Structure](#project-structure)  
 
 ---
