@@ -1,8 +1,10 @@
-import React, { useContext } from 'react'
-import { UserContext } from './App'
+import React, { useState, useContext } from "react";
+import { UserContext } from "./App";
+import OliveOilItem from "./OliveOilItem";
 
 function UserProducers() {
-  const { userProducers } = useContext(UserContext);
+  const { userProducers, handleEditOil, handleDeleteOil } = useContext(UserContext);
+  const [expandedProducerId, setExpandedProducerId] = useState(null);
 
   return (
     <div>
@@ -10,12 +12,32 @@ function UserProducers() {
       <ul>
         {userProducers.map((producer) => (
           <li key={producer.id}>
-            <strong>{producer.name}</strong> — Address: {producer.address}, Capacity: {producer.capacity}
+            <strong
+              onClick={() =>
+                setExpandedProducerId(expandedProducerId === producer.id ? null : producer.id)
+              }
+            >
+              {producer.name}
+            </strong>{" "}
+            — Address: {producer.address}, Capacity: {producer.capacity}
+            {expandedProducerId === producer.id && (
+              <ul>
+                {producer.oils.map((oil) => (
+                  <li key={oil.id}>
+                    <OliveOilItem
+                      oil={oil}
+                      onEdit={handleEditOil}
+                      onDelete={handleDeleteOil}
+                    />
+                  </li>
+                ))}
+              </ul>
+            )}
           </li>
         ))}
       </ul>
     </div>
-  )
+  );
 }
 
-export default UserProducers
+export default UserProducers;

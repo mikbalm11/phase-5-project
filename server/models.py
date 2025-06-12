@@ -1,6 +1,7 @@
 from config import db, bcrypt
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import validates
+import re
 
 OLIVE_OIL_PRODUCING_REGIONS_BY_COUNTRY = {
     "Spain": ["Andalusia", "Catalonia", "Castile-La Mancha", "Extremadura", "Valencia"],
@@ -51,12 +52,25 @@ class User(db.Model):
 
     oils = db.relationship('OliveOil', back_populates='user', cascade='all, delete-orphan')
 
+    @property
+    def producers(self):
+        return list({oil.producer for oil in self.oils})
+
+    @property
+    def olives(self):
+        return list({oil.olive for oil in self.oils})
+
     @hybrid_property
     def password(self):
         raise AttributeError('Password hashes may not be viewed.')
 
     @password.setter
     def password(self, password):
+        if password is None or not isinstance(password, str) or not re.match(
+            r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$", password
+        ):
+            raise ValueError("Password must be a non-empty string of at least 8 characters and include an uppercase letter, a lowercase letter, a number, and a special character.")
+
         password_hash = bcrypt.generate_password_hash(password.encode('utf-8'))
         self._password = password_hash.decode('utf-8')
 
@@ -68,8 +82,8 @@ class User(db.Model):
 
     @validates('username')
     def validate_username(self, key, username):
-        if username is None or not isinstance(username, str) or len(username.strip()) < 3:
-            raise ValueError("Username must be a non-empty string of at least 3 characters.")
+        if username is None or not isinstance(username, str) or not re.match(r"^[a-zA-Z0-9]{6,16}$", username):
+            raise ValueError("Username must be a non-empty string of at least 6 and at most 16 alphanumeric characters.")
         return username
 
     def __repr__(self):
@@ -89,7 +103,7 @@ class Olive(db.Model):
 
     @validates('name')
     def validate_name(self, key, name):
-        if name is None or not isinstance(name, str) or len(name.strip()) < 3:
+        if name is None or not isinstance(name, str) or not re.match(r"^[a-zA-Z0-9 ]{3,}$", name):
             raise ValueError("Name must be a non-empty string of at least 3 characters.")
         return name
 
@@ -135,13 +149,13 @@ class Producer(db.Model):
 
     @validates('name')
     def validate_name(self, key, name):
-        if name is None or not isinstance(name, str) or len(name.strip()) < 3:
-            raise ValueError("Name must be a non-empty string of at least 3 characters.")
+        if name is None or not isinstance(name, str) or not re.match(r"^[a-zA-Z0-9 ]{3,}$", name):
+            raise ValueError("Name must be a non-empty string of at least 3 alphanumeric characters.")
         return name
 
     @validates('address')
     def validate_address(self, key, address):
-        if address is None or not isinstance(address, str) or len(address.strip()) < 12:
+        if address is None or not isinstance(address, str) or not re.match(r"^[a-zA-Z0-9 ]{12,}$", address):
             raise ValueError("Address must be a non-empty string of at least 12 characters.")
         return address
 
@@ -174,7 +188,7 @@ class OliveOil(db.Model):
 
     @validates('name')
     def validate_name(self, key, name):
-        if name is None or not isinstance(name, str) or len(name.strip()) < 3:
+        if name is None or not isinstance(name, str) or not re.match(r"^[a-zA-Z0-9 ]{3,}$", name):
             raise ValueError("Name must be a non-empty string of at least 3 characters.")
         return name
 

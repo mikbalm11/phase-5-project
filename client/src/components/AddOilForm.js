@@ -7,9 +7,9 @@ function AddOilForm() {
   const {
     producers, setProducers,
     olives, setOlives,
-    user, setUser,
     userProducers, setUserProducers,
-    userOlives, setUserOlives
+    userOlives, setUserOlives,
+    handleAddOil
   } = useContext(UserContext);
 
   const [name, setName] = useState("");
@@ -45,8 +45,8 @@ function AddOilForm() {
           price: parseFloat(price),
           acidity: parseFloat(acidity),
           isActive,
-          producerId: producerId,
-          oliveId: oliveId
+          producerId,
+          oliveId,
         }),
       });
 
@@ -57,8 +57,10 @@ function AddOilForm() {
 
       const newOil = await res.json();
 
-      setUser({ ...user, oils: [...user.oils, newOil] });
+      // Call handler from App.js
+      handleAddOil(newOil);
 
+      // Clear form
       setName("");
       setYear("");
       setPrice("");
@@ -112,8 +114,6 @@ function AddOilForm() {
         <input
           type="number"
           placeholder="Price"
-          min="0.0"
-          step="10.0"
           value={price}
           onChange={(e) => setPrice(e.target.value)}
           required
@@ -122,7 +122,7 @@ function AddOilForm() {
           type="number"
           min="0.0"
           max="3.0"
-          step="0.1"
+          step="0.01"
           placeholder="Acidity (0.0-3.0)"
           value={acidity}
           onChange={(e) => setAcidity(e.target.value)}
@@ -159,10 +159,9 @@ function AddOilForm() {
             </option>
           ))}
         </select>
-        <button>
-          Add Olive Oil
-        </button>
+        <button>Add Olive Oil</button>
       </form>
+
       <div>Don't see your producer or olive?</div>
       <button onClick={() => setShowProducerForm((prev) => !prev)}>
         {showProducerForm ? "Cancel Adding Producer" : "Add New Producer"}
@@ -173,7 +172,6 @@ function AddOilForm() {
         {showOliveForm ? "Cancel Adding Olive" : "Add New Olive"}
       </button>
       {showOliveForm && <AddOliveForm onAddOlive={handleNewOlive} />}
-
     </div>
   );
 }

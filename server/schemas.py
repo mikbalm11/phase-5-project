@@ -1,6 +1,8 @@
-from marshmallow_sqlalchemy import SQLAlchemySchema, auto_field, fields
+from marshmallow_sqlalchemy import SQLAlchemySchema, auto_field
+from marshmallow import fields
 from config import ma
 from models import User, Olive, Producer, OliveOil
+
 
 class UserSchema(SQLAlchemySchema):
     class Meta:
@@ -11,6 +13,8 @@ class UserSchema(SQLAlchemySchema):
     username = auto_field()
 
     oils = fields.Nested('OliveOilSchema', many=True, exclude=('user',))
+    producers = fields.Nested('ProducerSchema', many=True, attribute="producers")
+    olives = fields.Nested('OliveSchema', many=True, attribute="olives")
 
 class OliveSchema(SQLAlchemySchema):
     class Meta:

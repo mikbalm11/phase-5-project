@@ -22,8 +22,8 @@ function App() {
   function applyUserData(data) {
     const userObj = data.user || { oils: [] };
     setUser(userObj);
-    setUserProducers((userObj.oils || []).map((oil) => oil.producer));
-    setUserOlives((userObj.oils || []).map((oil) => oil.olive));
+    setUserProducers((data.userProducers || []));
+    setUserOlives((data.userOlives || []));
     setExtraData(data.extraData || {});
   }
 
@@ -48,6 +48,7 @@ function App() {
         setUser(null);
         setProducers([]);
         setUserProducers([]);
+        setOlives([]);
       } finally {
         setLoading(false);
       }
@@ -80,6 +81,100 @@ function App() {
     });
   }
 
+function handleAddOil(newOil) {
+  setUser((prev) => ({
+    ...prev,
+    oils: [...prev.oils, newOil],
+  }));
+
+  if (newOil.olive) {
+    setUserOlives((prev) => {
+      const found = prev.find((o) => o.id === newOil.olive.id);
+      if (found) {
+        return prev.map((olive) =>
+          olive.id === newOil.olive.id
+            ? { ...olive, oils: [...olive.oils, newOil] }
+            : olive
+        );
+      } else {
+        return [...prev, { ...newOil.olive, oils: [newOil] }];
+      }
+    });
+  }
+
+  if (newOil.producer) {
+    setUserProducers((prev) => {
+      const found = prev.find((p) => p.id === newOil.producer.id);
+      if (found) {
+        return prev.map((producer) =>
+          producer.id === newOil.producer.id
+            ? { ...producer, oils: [...producer.oils, newOil] }
+            : producer
+        );
+      } else {
+        return [...prev, { ...newOil.producer, oils: [newOil] }];
+      }
+    });
+  }
+}
+
+  function handleEditOil(updatedOil) {
+    setUser((prev) => ({
+      ...prev,
+      oils: prev.oils.map((oil) => (oil.id === updatedOil.id ? updatedOil : oil)),
+    }));
+
+    setUserOlives((prevOlives) =>
+      prevOlives.map((olive) => {
+        if (!olive.oils.find((o) => o.id === updatedOil.id)) return olive;
+        return {
+          ...olive,
+          oils: olive.oils.map((oil) =>
+            oil.id === updatedOil.id ? updatedOil : oil
+          ),
+        };
+      })
+    );
+
+    setUserProducers((prevProducers) =>
+      prevProducers.map((producer) => {
+        if (!producer.oils.find((o) => o.id === updatedOil.id)) return producer;
+        return {
+          ...producer,
+          oils: producer.oils.map((oil) =>
+            oil.id === updatedOil.id ? updatedOil : oil
+          ),
+        };
+      })
+    );
+  }
+    function handleDeleteOil(deletedId) {
+    setUser((prev) => ({
+      ...prev,
+      oils: prev.oils.filter((oil) => oil.id !== deletedId),
+    }));
+
+    setUserOlives((prevOlives) =>
+      prevOlives
+        .map((olive) => {
+          const filteredOils = olive.oils.filter((oil) => oil.id !== deletedId);
+          if (filteredOils.length === 0) return null;
+          return { ...olive, oils: filteredOils };
+        })
+        .filter(Boolean)
+    );
+
+    setUserProducers((prevProducers) =>
+      prevProducers
+        .map((producer) => {
+          const filteredOils = producer.oils.filter((oil) => oil.id !== deletedId);
+          if (filteredOils.length === 0) return null;
+          return { ...producer, oils: filteredOils };
+        })
+        .filter(Boolean)
+    );
+  }
+
   return (
     <UserContext.Provider value={{ 
       user, setUser,
@@ -87,7 +182,8 @@ function App() {
       olives, setOlives,
       userProducers, setUserProducers,
       userOlives, setUserOlives,
-      extraData
+      extraData,
+      handleAddOil, handleEditOil, handleDeleteOil,
       }}>
       {loading ? (
         <p>Loading...</p>
@@ -106,7 +202,6 @@ function App() {
             {tabOpen === "producers" && <UserProducers />}
         </div>
       ) : (
-        
         <div>
           <NavBar onLogout={handleLogout} onNavigate={setForm} />
           {form === "login" && <LoginForm onLogin={handleLogin} />}

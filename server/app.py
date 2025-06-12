@@ -50,7 +50,7 @@ class Olives(Resource):
         olives = Olive.query.all()
 
         result = make_response(
-            OliveSchema(many=True).dump(olives),
+            OliveSchema(many=True, exclude=('oils',)).dump(olives),
             200
         )
 
@@ -84,7 +84,7 @@ class Producers(Resource):
         producers = Producer.query.all()
 
         result = make_response(
-            ProducerSchema(many=True).dump(producers),
+            ProducerSchema(many=True, exclude=('oils',)).dump(producers),
             200
         )
 
@@ -293,7 +293,8 @@ class Oil(Resource):
             )
 
             return result
-
+        print("Oil user_id:", oil.user_id)
+        print("Session user_id:", session['user_id'])
         if oil.user_id != session['user_id']:
 
             result = make_response(
@@ -390,24 +391,38 @@ class CheckSession(Resource):
 
             if not user:
                 return make_response({}, 401)
-            
-            producer_map ={}
 
+            producer_map = {}
             for oil in user.oils:
                 producer = oil.producer
+                if producer:
+                    if producer.id not in producer_map:
+                        producer_map[producer.id] = {
+                            "id": producer.id,
+                            "name": producer.name,
+                            "address": producer.address,
+                            "capacity": producer.capacity,
+                            "oils": []
+                        }
+                    producer_map[producer.id]["oils"].append(OliveOilSchema().dump(oil))
 
-                if producer and producer.id not in producer_map:
-                    producer_map[producer.id] = {
-                        "id": producer.id,
-                        "name": producer.name,
-                        "address": producer.address,
-                        "capacity": producer.capacity,
-                        "olives": []
-                    }
-                
-                producer_map[producer.id]["olives"].append(oils_schema.dump(oil))
+            olive_map = {}
+            for oil in user.oils:
+                olive = oil.olive
+                if olive:
+                    if olive.id not in olive_map:
+                        olive_map[olive.id] = {
+                            "id": olive.id,
+                            "name": olive.name,
+                            "country": olive.country,
+                            "region": olive.region,
+                            "color": olive.color,
+                            "rarity": olive.rarity,
+                            "oils": []
+                        }
+                    olive_map[olive.id]["oils"].append(OliveOilSchema().dump(oil))
 
-            user_schema = UserSchema()
+            user_schema = UserSchema(exclude=("producers", "olives"))
             user_data = user_schema.dump(user)
 
             extra_data = {
@@ -419,20 +434,16 @@ class CheckSession(Resource):
 
             response_data = {
                 "user": user_data,
+                "userProducers": list(producer_map.values()),
+                "userOlives": list(olive_map.values()),
                 "extraData": extra_data
             }
 
-            result = make_response(
-                response_data,
-                200
-            )
-
-            return result
+            return make_response(response_data, 200)
 
         except Exception as e:
             print("CheckSession error:", e)
-
-            result = make_response(
+            return make_response(
                 {'error': 'Server error during session check'},
                 500
             )
