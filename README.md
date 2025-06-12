@@ -99,18 +99,6 @@ This launches the frontend on `http://localhost:4000`.
 
 ---
 
-## Testing
-
-### Backend Tests
-
-Run backend tests using `pytest`:
-
-```bash
-cd server
-pytest
-```
-
----
 
 ## Project Structure
 
