@@ -10,7 +10,7 @@ from schemas import UserSchema, OliveSchema, ProducerSchema, OliveOilSchema
 user_schema = UserSchema()
 olive_schema = OliveSchema()
 producer_schema = ProducerSchema()
-oils_schema = OliveOilSchema()
+oil_schema = OliveOilSchema()
 
 @app.before_request
 def check_if_logged_in():
@@ -148,7 +148,7 @@ class Oils(Resource):
         db.session.commit()
 
         result = make_response(
-            oils_schema.dump(new_oil),
+            oil_schema.dump(new_oil),
             201
         )
 
@@ -247,7 +247,7 @@ class Oil(Resource):
             db.session.commit()
 
             result = make_response(
-                oils_schema.dump(oil),
+                oil_schema.dump(oil),
                 200
             )
 
