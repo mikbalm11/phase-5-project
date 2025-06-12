@@ -81,42 +81,42 @@ function App() {
     });
   }
 
-function handleAddOil(newOil) {
-  setUser((prev) => ({
-    ...prev,
-    oils: [...prev.oils, newOil],
-  }));
+  function handleAddOil(newOil) {
+    setUser((prev) => ({
+      ...prev,
+      oils: [...prev.oils, newOil],
+    }));
 
-  if (newOil.olive) {
-    setUserOlives((prev) => {
-      const found = prev.find((o) => o.id === newOil.olive.id);
-      if (found) {
-        return prev.map((olive) =>
-          olive.id === newOil.olive.id
-            ? { ...olive, oils: [...olive.oils, newOil] }
-            : olive
-        );
-      } else {
-        return [...prev, { ...newOil.olive, oils: [newOil] }];
-      }
-    });
-  }
+    if (newOil.olive) {
+      setUserOlives((prev) => {
+        const found = prev.find((o) => o.id === newOil.olive.id);
+        if (found) {
+          return prev.map((olive) =>
+            olive.id === newOil.olive.id
+              ? { ...olive, oils: [...olive.oils, newOil] }
+              : olive
+          );
+        } else {
+          return [...prev, { ...newOil.olive, oils: [newOil] }];
+        }
+      });
+    }
 
-  if (newOil.producer) {
-    setUserProducers((prev) => {
-      const found = prev.find((p) => p.id === newOil.producer.id);
-      if (found) {
-        return prev.map((producer) =>
-          producer.id === newOil.producer.id
-            ? { ...producer, oils: [...producer.oils, newOil] }
-            : producer
-        );
-      } else {
-        return [...prev, { ...newOil.producer, oils: [newOil] }];
-      }
-    });
+    if (newOil.producer) {
+      setUserProducers((prev) => {
+        const found = prev.find((p) => p.id === newOil.producer.id);
+        if (found) {
+          return prev.map((producer) =>
+            producer.id === newOil.producer.id
+              ? { ...producer, oils: [...producer.oils, newOil] }
+              : producer
+          );
+        } else {
+          return [...prev, { ...newOil.producer, oils: [newOil] }];
+        }
+      });
+    }
   }
-}
 
   function handleEditOil(updatedOil) {
     setUser((prev) => ({
@@ -148,7 +148,7 @@ function handleAddOil(newOil) {
       })
     );
   }
-    function handleDeleteOil(deletedId) {
+  function handleDeleteOil(deletedId) {
     setUser((prev) => ({
       ...prev,
       oils: prev.oils.filter((oil) => oil.id !== deletedId),
@@ -176,7 +176,7 @@ function handleAddOil(newOil) {
   }
 
   return (
-    <UserContext.Provider value={{ 
+    <UserContext.Provider value={{
       user, setUser,
       producers, setProducers,
       olives, setOlives,
@@ -184,32 +184,49 @@ function handleAddOil(newOil) {
       userOlives, setUserOlives,
       extraData,
       handleAddOil, handleEditOil, handleDeleteOil,
-      }}>
+    }}>
       {loading ? (
         <p>Loading...</p>
       ) : user ? (
-        <div>
+        <div className="app-container">
           <NavBar onLogout={handleLogout} onNavigate={setForm} />
 
-            <div>
-                <button onClick={() => setTabOpen("oils")}>Oils</button>
-                <button onClick={() => setTabOpen("olives")}>Olives</button>
-                <button onClick={() => setTabOpen("producers")}>Producers</button>
-            </div>
+          <div className="tabs-container">
+            <button
+              className={tabOpen === "oils" ? "active" : ""}
+              onClick={() => setTabOpen("oils")}
+            >
+              Oils
+            </button>
+            <button
+              className={tabOpen === "olives" ? "active" : ""}
+              onClick={() => setTabOpen("olives")}
+            >
+              Olives
+            </button>
+            <button
+              className={tabOpen === "producers" ? "active" : ""}
+              onClick={() => setTabOpen("producers")}
+            >
+              Producers
+            </button>
+          </div>
 
+          <div className="tab-content">
             {tabOpen === "oils" && <UserOliveOils />}
             {tabOpen === "olives" && <UserOlives />}
             {tabOpen === "producers" && <UserProducers />}
+          </div>
         </div>
       ) : (
-        <div>
+        <div className="auth-container">
           <NavBar onLogout={handleLogout} onNavigate={setForm} />
           {form === "login" && <LoginForm onLogin={handleLogin} />}
           {form === "signup" && <SignUpForm onLogin={handleLogin} />}
           {(form === "login" || form === "signup") && (
-            <button onClick={() => setForm(null)}>Back</button>
+            <button className="back-button" onClick={() => setForm(null)}>Back</button>
           )}
-          <div>Welcome to OliveCore 🫒</div>
+          <div className="welcome-message">Welcome to OliveCore 🫒</div>
         </div>
       )}
     </UserContext.Provider>

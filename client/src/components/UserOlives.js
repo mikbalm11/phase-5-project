@@ -7,24 +7,29 @@ function UserOlives() {
   const [expandedOliveId, setExpandedOliveId] = useState(null);
 
   return (
-    <div>
+    <section className="user-olives">
       <h1>My Olives</h1>
-      <ul>
+      <ul className="olive-list">
         {userOlives.map((olive) => (
-          <li key={olive.id}>
+          <li key={olive.id} className="olive-list-item">
             <strong
+              className="olive-name"
               onClick={() =>
                 setExpandedOliveId(expandedOliveId === olive.id ? null : olive.id)
               }
+              role="button"
+              aria-expanded={expandedOliveId === olive.id}
             >
               {olive.name}
             </strong>{" "}
-            — {olive.region}, {olive.country}, Color: {olive.color}, Rarity:{" "}
-            {olive.rarity}
+            — <span className="olive-region">{olive.region}</span>,{" "}
+            <span className="olive-country">{olive.country}</span>, Color:{" "}
+            <span className="olive-color">{olive.color}</span>, Rarity:{" "}
+            <span className="olive-rarity">{olive.rarity}</span>
             {expandedOliveId === olive.id && (
-              <ul>
+              <ul className="olive-oil-list">
                 {olive.oils.map((oil) => (
-                  <li key={oil.id}>
+                  <li key={oil.id} className="olive-oil-list-item">
                     <OliveOilItem
                       oil={oil}
                       onEdit={handleEditOil}
@@ -37,7 +42,7 @@ function UserOlives() {
           </li>
         ))}
       </ul>
-    </div>
+    </section>
   );
 }
 

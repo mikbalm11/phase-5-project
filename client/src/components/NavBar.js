@@ -5,18 +5,18 @@ function NavBar({ onLogout, onNavigate }) {
   const { user } = useContext(UserContext);
 
   return (
-    <nav>
-      <h2>OliveCore 🫒</h2>
+    <nav className="navbar">
+      <h2 className="navbar-logo">OliveCore 🫒</h2>
 
       {user ? (
-        <div>
-          <span>Welcome, {user.username}!</span>
-          <button onClick={onLogout}>Logout</button>
+        <div className="navbar-user-section">
+          <span className="navbar-welcome">Welcome, {user.username}!</span>
+          <button className="navbar-button logout-button" onClick={onLogout}>Logout</button>
         </div>
       ) : (
-        <div>
-          <button onClick={() => onNavigate("login")}>Login</button>
-          <button onClick={() => onNavigate("signup")}>Sign Up</button>
+        <div className="navbar-auth-buttons">
+          <button className="navbar-button" onClick={() => onNavigate("login")}>Login</button>
+          <button className="navbar-button" onClick={() => onNavigate("signup")}>Sign Up</button>
         </div>
       )}
     </nav>

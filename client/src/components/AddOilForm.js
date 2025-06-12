@@ -90,7 +90,7 @@ function AddOilForm() {
   }
 
   return (
-    <div>
+    <div className="add-oil-form">
       <h2>Add a New Olive Oil</h2>
       <form onSubmit={handleSubmit}>
         <input
@@ -109,7 +109,6 @@ function AddOilForm() {
           value={year}
           onChange={(e) => setYear(e.target.value)}
           required
-          style={{ minWidth: "120px" }}
         />
         <input
           type="number"
@@ -127,7 +126,6 @@ function AddOilForm() {
           value={acidity}
           onChange={(e) => setAcidity(e.target.value)}
           required
-          style={{ minWidth: "108px" }}
         />
         Active
         <input
@@ -162,7 +160,7 @@ function AddOilForm() {
         <button>Add Olive Oil</button>
       </form>
 
-      <div>Don't see your producer or olive?</div>
+      <div className="toggle-forms">Don't see your producer or olive?</div>
       <button onClick={() => setShowProducerForm((prev) => !prev)}>
         {showProducerForm ? "Cancel Adding Producer" : "Add New Producer"}
       </button>

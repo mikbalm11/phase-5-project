@@ -46,7 +46,7 @@ function AddOliveForm({ onAddOlive }) {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="add-entity-form">
       <input
         type="text"
         placeholder="Olive name"

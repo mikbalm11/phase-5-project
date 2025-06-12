@@ -7,9 +7,9 @@ function UserOliveOils() {
   const { user, handleEditOil, handleDeleteOil } = useContext(UserContext);
 
   return (
-    <div>
+    <section className="user-olive-oils">
       <h1>My Olive Oils</h1>
-      <ul>
+      <ul className="oil-list">
         {user?.oils.map((oil) => (
           <li key={oil.id}>
             <OliveOilItem oil={oil} onEdit={handleEditOil} onDelete={handleDeleteOil} />
@@ -17,7 +17,7 @@ function UserOliveOils() {
         ))}
       </ul>
       <AddOilForm />
-    </div>
+    </section>
   );
 }
 

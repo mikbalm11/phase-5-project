@@ -33,32 +33,36 @@ function SignUpForm({ onLogin }) {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <label>
-        Username:{" "}
-        <input
-          type="text"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          required
-        />
-      </label>
-      <br />
-      <label>
-        Password:{" "}
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-      </label>
-      <br />
-      <button type="submit" disabled={isLoading}>
+    <form onSubmit={handleSubmit} className="signup-form">
+      <div className="form-group">
+        <label>
+          Username:{" "}
+          <input
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+            className="form-input"
+          />
+        </label>
+      </div>
+      <div className="form-group">
+        <label>
+          Password:{" "}
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            className="form-input"
+          />
+        </label>
+      </div>
+      <button type="submit" disabled={isLoading} className="form-button">
         {isLoading ? "Signing Up..." : "Sign Up"}
       </button>
       {errors.length > 0 && (
-        <div style={{ color: "red", marginTop: "10px" }}>
+        <div className="form-errors">
           {errors.map((error, idx) => (
             <p key={idx}>{error}</p>
           ))}

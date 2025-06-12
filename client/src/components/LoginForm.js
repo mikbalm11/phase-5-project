@@ -27,8 +27,8 @@ function LoginForm({ onLogin }) {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div>
+    <form onSubmit={handleSubmit} className="login-form">
+      <div className="form-group">
         <label>
           Username:{" "}
           <input
@@ -36,10 +36,11 @@ function LoginForm({ onLogin }) {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
+            className="form-input"
           />
         </label>
       </div>
-      <div>
+      <div className="form-group">
         <label>
           Password:{" "}
           <input
@@ -47,14 +48,15 @@ function LoginForm({ onLogin }) {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            className="form-input"
           />
         </label>
       </div>
-      <button type="submit" disabled={isLoading}>
+      <button type="submit" disabled={isLoading} className="form-button">
         {isLoading ? "Logging in..." : "Login"}
       </button>
       {errors.length > 0 && (
-        <ul style={{ color: "red" }}>
+        <ul className="form-errors">
           {errors.map((err, i) => (
             <li key={i}>{err}</li>
           ))}

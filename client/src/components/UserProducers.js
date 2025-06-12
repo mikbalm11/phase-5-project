@@ -7,23 +7,27 @@ function UserProducers() {
   const [expandedProducerId, setExpandedProducerId] = useState(null);
 
   return (
-    <div>
+    <section className="user-producers">
       <h1>My Producers</h1>
-      <ul>
+      <ul className="producer-list">
         {userProducers.map((producer) => (
-          <li key={producer.id}>
+          <li key={producer.id} className="producer-list-item">
             <strong
+              className="producer-name"
               onClick={() =>
                 setExpandedProducerId(expandedProducerId === producer.id ? null : producer.id)
               }
+              role="button"
+              aria-expanded={expandedProducerId === producer.id}
             >
               {producer.name}
             </strong>{" "}
-            — Address: {producer.address}, Capacity: {producer.capacity}
+            — <span className="producer-address">Address: {producer.address}</span>,{" "}
+            <span className="producer-capacity">Capacity: {producer.capacity}</span>
             {expandedProducerId === producer.id && (
-              <ul>
+              <ul className="producer-oil-list">
                 {producer.oils.map((oil) => (
-                  <li key={oil.id}>
+                  <li key={oil.id} className="producer-oil-list-item">
                     <OliveOilItem
                       oil={oil}
                       onEdit={handleEditOil}
@@ -36,7 +40,7 @@ function UserProducers() {
           </li>
         ))}
       </ul>
-    </div>
+    </section>
   );
 }
 

@@ -155,7 +155,7 @@ class Producer(db.Model):
 
     @validates('address')
     def validate_address(self, key, address):
-        if address is None or not isinstance(address, str) or not re.match(r"^[a-zA-Z0-9 ]{12,}$", address):
+        if address is None or not isinstance(address, str) or not re.match(r"^[a-zA-Z0-9 ,]{12,}$", address):
             raise ValueError("Address must be a non-empty string of at least 12 characters.")
         return address
 

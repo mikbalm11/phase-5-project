@@ -33,7 +33,7 @@ function AddProducerForm({ onAddProducer }) {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="add-entity-form">
       <input
         type="text"
         placeholder="Producer name"
